@@ -1,37 +1,87 @@
-# 🎥 YouTube Video Downloader
+# Free YouTube Video Downloader
 
-A **simple, powerful, and user-friendly** YouTube video downloader built with Python and tkinter. Features a clean GUI interface with smart fallback strategies and comprehensive format detection.
+A powerful, free YouTube video downloader that works both as a desktop application and a web-based service. Download YouTube videos in various qualities (1080p, 720p, 480p, 360p) to MP4 format without any registration or hidden costs.
 
-![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Platform](https://img.shields.io/badge/Platform-Cross--platform-lightgrey.svg)
+## 🌟 Features
 
-## ✨ Features
-
-- **🎯 Smart Quality Selection** - Choose specific resolutions or let the app auto-select the best available
-- **📋 Format Detection** - List all available formats before downloading
-- **🔄 Fallback Strategy** - Automatic retry with alternative methods if download fails
-- **🎨 Clean GUI** - Modern, intuitive interface built with tkinter
-- **📁 Custom Locations** - Choose where to save your downloads
-- **⚡ Progress Tracking** - Visual feedback during downloads
-- **🛡️ Error Handling** - Robust error handling with user-friendly messages
-- **🌐 Cross-Platform** - Works on Windows, macOS, and Linux
+- **100% Free**: No registration, no subscription, no hidden costs
+- **Multiple Formats**: Download in MP4 video or MP3 audio
+- **Quality Options**: Choose from 1080p, 720p, 480p, 360p, or auto-select best quality
+- **Cross-Platform**: Works on Windows, macOS, and Linux
+- **Real-time Progress**: Track download progress with live updates
+- **Format Detection**: See all available formats before downloading
+- **Smart Fallback**: Automatic retry with alternative methods if preferred format fails
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.7 or higher
-- Internet connection
+### Option 1: Web-Based Downloader (Recommended)
 
-### Installation
+The web-based downloader runs in your browser and requires no software installation!
+
+1. **Start the server:**
+   ```bash
+   # Make sure you're in the project directory
+   cd video-downloader
+   
+   # Activate virtual environment
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   
+   # Start the web server
+   python start_web_downloader.py
+   ```
+
+2. **Open your browser** and go to the URL shown (usually `http://localhost:8080`)
+
+3. **Paste a YouTube URL** and start downloading!
+
+### Option 2: Desktop Application
+
+For the traditional desktop GUI application:
+
+1. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run the application:**
+   ```bash
+   python youtube_downloader.py
+   ```
+
+## 📱 Web-Based Downloader
+
+The web-based version provides a modern, responsive interface that works on any device with a browser:
+
+- **No Installation Required**: Works directly in your browser
+- **Real-time Progress**: Live download progress with speed and ETA
+- **Format Selection**: Choose quality before downloading
+- **Mobile Friendly**: Responsive design works on phones and tablets
+- **Instant Access**: No software to install or configure
+
+### How to Use Web Downloader
+
+1. **Paste YouTube URL**: Copy any YouTube video URL and paste it
+2. **Select Quality**: Choose your preferred resolution or use "Auto" for best results
+3. **List Formats**: Click "List Available Formats" to see all options
+4. **Download**: Click "Download Video" and watch real-time progress
+5. **Enjoy**: Your video downloads to your Downloads folder
+
+## 🛠️ Installation
+
+### Prerequisites
+
+- Python 3.8 or higher
+- pip (Python package installer)
+
+### Setup
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/youtube-downloader.git
-   cd youtube-downloader
+   git clone https://github.com/harryz-code/video-downloader.git
+   cd video-downloader
    ```
 
-2. **Create a virtual environment:**
+2. **Create virtual environment:**
    ```bash
    python3 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -39,151 +89,103 @@ A **simple, powerful, and user-friendly** YouTube video downloader built with Py
 
 3. **Install dependencies:**
    ```bash
+   # For web-based downloader
+   pip install -r web_requirements.txt
+   
+   # For desktop application
    pip install -r requirements.txt
    ```
 
-4. **Run the application:**
-   ```bash
-   python youtube_downloader.py
-   ```
+## 🔧 Usage
 
-## 📖 Usage Guide
+### Web-Based Downloader
 
-### Basic Download
-1. **Enter YouTube URL** - Paste any YouTube video URL
-2. **Select Quality** - Choose from available options or use "auto" for best results
-3. **Choose Location** - Pick where to save your video
-4. **Click Download** - The app handles the rest!
-
-### Advanced Features
-
-#### 📋 List Available Formats
-- Click **"List Available Formats"** to see all available resolutions and file sizes
-- Helps you choose the best quality for your needs
-- Shows file format and estimated size
-
-#### 🎯 Quality Options
-- **best** - Highest quality available
-- **worst** - Lowest quality available  
-- **720p, 480p, 360p** - Specific resolutions (with fallback)
-- **auto** - Smart automatic selection
-
-#### 🔄 Smart Fallback
-- If your preferred quality isn't available, the app automatically tries alternatives
-- Handles YouTube API changes gracefully
-- Ensures successful downloads even when specific formats fail
-
-## 🛠️ How It Works
-
-This application uses **yt-dlp**, a powerful and actively maintained fork of youtube-dl that:
-
-- **Regularly updates** to handle YouTube's changing systems
-- **Supports multiple formats** including video and audio
-- **Handles region restrictions** and age-gated content
-- **Provides detailed progress** and error information
-
-The GUI is built with **tkinter** for maximum compatibility across platforms.
-
-## 📁 Project Structure
-
-```
-youtube-downloader/
-├── youtube_downloader.py    # Main application
-├── requirements.txt          # Python dependencies
-├── README.md                # This file
-├── .gitignore              # Git ignore rules
-└── venv/                   # Virtual environment (not tracked)
-```
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### **"Module not found" errors**
 ```bash
-# Make sure you're in the virtual environment
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+# Start the web server
+python start_web_downloader.py
+
+# Or start directly
+python web_downloader.py
 ```
 
-#### **Download failures**
+Then open your browser to the displayed URL (usually `http://localhost:8080`).
+
+### Desktop Application
+
 ```bash
-# Update yt-dlp to the latest version
-pip install --upgrade yt-dlp
+python youtube_downloader.py
 ```
 
-#### **Permission errors**
-- Ensure you have write permissions to the download directory
-- Try running as administrator (Windows) or with sudo (Linux/macOS)
+## 📋 Requirements
 
-#### **Format not available**
-- Use the **"List Available Formats"** button to see what's actually available
-- Try the **"auto"** quality setting for automatic selection
-- The app will automatically fall back to available formats
+### Web-Based Downloader
+- Flask==2.3.3
+- Flask-SocketIO==5.3.6
+- yt-dlp==2025.7.21
+- Other dependencies in `web_requirements.txt`
 
-### YouTube Changes
-YouTube frequently updates their systems. If downloads stop working:
+### Desktop Application
+- tkinter (usually included with Python)
+- yt-dlp
+- Other dependencies in `requirements.txt`
 
-1. **Update yt-dlp:**
-   ```bash
-   pip install --upgrade yt-dlp
-   ```
+## 🌐 How It Works
 
-2. **Check for issues:**
-   - Visit [yt-dlp GitHub issues](https://github.com/yt-dlp/yt-dlp/issues)
-   - Check if others are experiencing similar problems
+The downloader uses `yt-dlp`, a powerful YouTube download library that:
+
+- Automatically handles YouTube's changing systems
+- Provides multiple quality and format options
+- Implements smart fallback strategies
+- Maintains high download speeds
+- Handles various YouTube URL formats
+
+## 🚨 Legal Notice
+
+This tool is for downloading videos you have permission to download. Please respect:
+
+- YouTube's Terms of Service
+- Copyright laws
+- Content creator rights
+
+Only download videos you own or have explicit permission to download.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how you can help:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-### Development Setup
-```bash
-git clone https://github.com/yourusername/youtube-downloader.git
-cd youtube-downloader
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-pip install -r requirements-dev.txt  # If you have dev dependencies
-```
+Contributions are welcome! This is an open-source project built for the community.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is open source and available under the MIT License.
 
-## ⚠️ Legal Notice
+## 🆘 Troubleshooting
 
-**Important:** This tool is for downloading videos you have permission to download. Please respect:
+### Port Already in Use
+If you get "Address already in use" errors:
+- The startup script automatically finds available ports
+- Or manually specify a different port in the code
 
-- **YouTube's Terms of Service**
-- **Copyright laws** in your jurisdiction
-- **Content creators' rights**
+### Dependencies Issues
+```bash
+# Reinstall dependencies
+pip install --upgrade -r web_requirements.txt
+```
 
-**Only download content you own or have explicit permission to download.**
-
-## 🙏 Acknowledgments
-
-- **yt-dlp team** for the excellent video downloading library
-- **Python community** for the robust tkinter GUI framework
-- **Contributors** who help improve this project
+### Virtual Environment Issues
+```bash
+# Recreate virtual environment
+rm -rf venv
+python3 -m venv venv
+source venv/bin/activate
+pip install -r web_requirements.txt
+```
 
 ## 📞 Support
 
-If you encounter issues:
-
-1. **Check the troubleshooting section** above
-2. **Search existing issues** on GitHub
-3. **Create a new issue** with detailed information:
-   - Operating system and Python version
-   - Error messages and logs
-   - Steps to reproduce the problem
+For issues or questions:
+- Check the troubleshooting section above
+- Review the code comments
+- Open an issue on GitHub
 
 ---
 
-**Made with ❤️ for the open-source community**
+**Enjoy downloading YouTube videos for free! 🎬✨**
