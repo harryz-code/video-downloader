@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader - Simple & Powerful</title>
+    <meta name="description" content="Download YouTube videos easily with our simple, powerful GUI application. Built with Python and tkinter for cross-platform compatibility.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-download"></i>
+                <span>YouTube Downloader</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#download">Download</a>
+                <a href="#usage">Usage</a>
+                <a href="https://github.com/harryz-code/video-downloader" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>Download YouTube Videos<br><span class="highlight">Simply & Safely</span></h1>
+                <p>A powerful, user-friendly YouTube video downloader built with Python. Features a clean GUI interface, smart quality selection, and automatic fallback strategies.</p>
+                <div class="hero-buttons">
+                    <a href="#download" class="btn btn-primary">
+                        <i class="fas fa-download"></i> Get Started
+                    </a>
+                    <a href="https://github.com/harryz-code/video-downloader" target="_blank" class="btn btn-secondary">
+                        <i class="fab fa-github"></i> View Source
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="app-preview">
+                    <div class="app-window">
+                        <div class="app-header">
+                            <div class="app-controls">
+                                <span class="control red"></span>
+                                <span class="control yellow"></span>
+                                <span class="control green"></span>
+                            </div>
+                            <div class="app-title">YouTube Video Downloader</div>
+                        </div>
+                        <div class="app-content">
+                            <div class="input-group">
+                                <label>YouTube URL:</label>
+                                <input type="text" placeholder="https://www.youtube.com/watch?v=..." readonly>
+                            </div>
+                            <div class="input-group">
+                                <label>Quality:</label>
+                                <select>
+                                    <option>Auto (Recommended)</option>
+                                    <option>720p</option>
+                                    <option>480p</option>
+                                    <option>360p</option>
+                                </select>
+                            </div>
+                            <button class="download-btn">
+                                <i class="fas fa-download"></i> Download Video
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Why Choose Our Downloader?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Smart Quality Selection</h3>
+                    <p>Choose specific resolutions or let the app automatically select the best available quality for your needs.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3>Format Detection</h3>
+                    <p>See all available formats before downloading. Know exactly what quality and file size you'll get.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Fallback Strategy</h3>
+                    <p>Automatic retry with alternative methods if your preferred format isn't available.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>Cross-Platform</h3>
+                    <p>Works seamlessly on Windows, macOS, and Linux with a native look and feel.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Open Source</h3>
+                    <p>Built with Python and tkinter. Free to use, modify, and contribute to the project.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Fast & Reliable</h3>
+                    <p>Uses yt-dlp for maximum compatibility and speed. Handles YouTube's changing systems gracefully.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <h2>Get Started in Minutes</h2>
+            <div class="download-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Clone the Repository</h3>
+                    <div class="code-block">
+                        <code>git clone https://github.com/harryz-code/video-downloader.git</code>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Set Up Environment</h3>
+                    <div class="code-block">
+                        <code>cd video-downloader<br>python3 -m venv venv<br>source venv/bin/activate</code>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Install & Run</h3>
+                    <div class="code-block">
+                        <code>pip install -r requirements.txt<br>python youtube_downloader.py</code>
+                        <button class="copy-btn" onclick="copyToClipboard(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Usage Section -->
+    <section id="usage" class="usage">
+        <div class="container">
+            <h2>How to Use</h2>
+            <div class="usage-content">
+                <div class="usage-text">
+                    <h3>Simple 4-Step Process</h3>
+                    <ol>
+                        <li><strong>Paste URL:</strong> Copy any YouTube video URL and paste it into the app</li>
+                        <li><strong>Choose Quality:</strong> Select your preferred resolution or use "Auto" for best results</li>
+                        <li><strong>Pick Location:</strong> Choose where to save your downloaded video</li>
+                        <li><strong>Download:</strong> Click the download button and wait for completion</li>
+                    </ol>
+                    <div class="usage-tips">
+                        <h4>💡 Pro Tips:</h4>
+                        <ul>
+                            <li>Use the "List Available Formats" button to see all quality options</li>
+                            <li>The "Auto" quality setting usually gives the best results</li>
+                            <li>If a specific quality fails, the app automatically tries alternatives</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="usage-image">
+                    <div class="usage-preview">
+                        <div class="preview-item">
+                            <i class="fas fa-link"></i>
+                            <span>Paste YouTube URL</span>
+                        </div>
+                        <div class="preview-arrow">→</div>
+                        <div class="preview-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Select Quality</span>
+                        </div>
+                        <div class="preview-arrow">→</div>
+                        <div class="preview-item">
+                            <i class="fas fa-folder"></i>
+                            <span>Choose Location</span>
+                        </div>
+                        <div class="preview-arrow">→</div>
+                        <div class="preview-item">
+                            <i class="fas fa-download"></i>
+                            <span>Download!</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>YouTube Video Downloader</h4>
+                    <p>A simple, powerful tool for downloading YouTube videos with a beautiful GUI interface.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="https://github.com/harryz-code/video-downloader" target="_blank">GitHub Repository</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#download">Download</a></li>
+                        <li><a href="#usage">Usage</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <p>This tool is for downloading videos you have permission to download. Please respect YouTube's Terms of Service and copyright laws.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 YouTube Video Downloader. Made with ❤️ for the open-source community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
