@@ -415,6 +415,18 @@
             font-size: 0.875rem;
         }
 
+        .step-animation {
+            margin-top: 1rem;
+        }
+
+        .animation-frame {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
         /* Alerts */
         .alert {
             padding: 1rem;
@@ -487,6 +499,99 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background: white;
+            padding: 3rem 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 2rem auto 0;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: color 0.2s;
+        }
+
+        .faq-question:hover {
+            color: var(--primary-color);
+        }
+
+        .faq-question i {
+            transition: transform 0.2s;
+        }
+
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            padding: 0 0 1.5rem;
+            color: var(--text-secondary);
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--secondary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-left p {
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .footer-disclaimer {
+            font-size: 0.875rem;
+            margin-top: 0.5rem !important;
+            opacity: 0.6 !important;
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-link {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .footer-link:hover {
+            opacity: 1;
+            color: white;
         }
     </style>
 </head>
@@ -621,6 +726,13 @@
             </div>
 
             <div class="form-container">
+                <!-- Download Location Info -->
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Where are files saved?</strong> Videos are automatically saved to your system's default Downloads folder. 
+                    After download completes, you'll see the exact location and can open the folder directly.
+                </div>
+
                 <form id="downloadForm">
                     <div class="form-group">
                         <label for="youtubeUrl" class="form-label">YouTube Video URL</label>
@@ -732,22 +844,268 @@
                     <div class="step-number">1</div>
                     <h3>Copy the link</h3>
                     <p>From the video's Share menu on YouTube.</p>
+                    <div class="step-animation">
+                        <div class="animation-frame">
+                            <svg viewBox="0 0 640 480" style="width: 100%; height: auto;">
+                                <defs>
+                                    <linearGradient id="glow" x1="0" x2="1" y1="0" y2="0">
+                                        <stop offset="0%" stop-color="#34d399" stop-opacity="0.15" />
+                                        <stop offset="50%" stop-color="#34d399" stop-opacity="0.35" />
+                                        <stop offset="100%" stop-color="#34d399" stop-opacity="0.15" />
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- Window frame -->
+                                <rect x="24" y="24" width="592" height="432" rx="14" fill="white" stroke="#e5e7eb" />
+                                <!-- Top bar -->
+                                <rect x="24" y="24" width="592" height="46" rx="14" fill="#f6f7f8" />
+                                <circle cx="48" cy="47" r="6" fill="#ef4444" />
+                                <circle cx="68" cy="47" r="6" fill="#f59e0b" />
+                                <circle cx="88" cy="47" r="6" fill="#10b981" />
+
+                                <!-- YouTube thumbnail mock -->
+                                <rect x="48" y="92" width="280" height="158" rx="10" fill="#f3f4f6" stroke="#e5e7eb" />
+                                <polygon points="168,150 168,192 208,171" fill="#ef4444" />
+
+                                <!-- Share button -->
+                                <rect x="348" y="212" width="110" height="30" rx="8" fill="#f3f4f6" stroke="#e5e7eb" />
+                                <text x="355" y="232" font-family="system-ui, -apple-system, Segoe UI, Roboto" font-size="14" fill="#374151">Share</text>
+
+                                <!-- URL pill that pulses -->
+                                <g class="url-pill">
+                                    <rect x="48" y="280" width="544" height="40" rx="20" fill="url(#glow)" />
+                                    <rect x="48" y="280" width="544" height="40" rx="20" fill="#ffffff" stroke="#e5e7eb" />
+                                    <text x="68" y="305" font-family="ui-monospace, SFMono-Regular, Menlo" font-size="14" fill="#6b7280">https://youtu.be/VIDEO_ID</text>
+                                </g>
+
+                                <!-- Copy icon moves from URL to clipboard -->
+                                <g class="copy-seq">
+                                    <!-- Copy icon -->
+                                    <rect class="copy-icon" x="540" y="288" width="24" height="24" rx="6" fill="#10b981" />
+                                    <path d="M548 295h10v10h-10zM546 297h10" stroke="#ffffff" stroke-width="2" stroke-linecap="round" fill="none" />
+                                    <!-- Clipboard target -->
+                                    <g class="clipboard">
+                                        <rect x="500" y="340" width="40" height="48" rx="6" fill="#e5f7f1" stroke="#10b981" />
+                                        <rect x="510" y="334" width="20" height="10" rx="3" fill="#10b981" />
+                                        <polyline points="510,362 522,374 540,352" fill="none" stroke="#10b981" stroke-width="3" />
+                                    </g>
+                                </g>
+
+                                <style>
+                                    .url-pill { animation: pulse 2.8s ease-in-out infinite; }
+                                    .copy-icon { animation: moveCopy 2.8s ease-in-out infinite; }
+                                    .clipboard { opacity: 0; animation: showClip 2.8s ease-in-out infinite; }
+
+                                    @keyframes pulse {
+                                        0%, 100% { opacity: 1; }
+                                        40% { opacity: 0.9; }
+                                        50% { opacity: 1; }
+                                    }
+                                    @keyframes moveCopy {
+                                        0%   { transform: translate(0px, 0px) scale(1); opacity: 0; }
+                                        20%  { opacity: 1; }
+                                        45%  { transform: translate(-40px, 52px) scale(1); }
+                                        55%  { transform: translate(-40px, 52px) scale(0.92); }
+                                        65%  { transform: translate(-40px, 52px) scale(1); opacity: 1; }
+                                        80%  { opacity: 0; }
+                                        100% { opacity: 0; }
+                                    }
+                                    @keyframes showClip {
+                                        0%, 40% { opacity: 0; }
+                                        55%, 100% { opacity: 1; }
+                                    }
+
+                                    @media (prefers-reduced-motion: reduce) {
+                                        .url-pill, .copy-icon, .clipboard { animation: none !important; }
+                                    }
+                                </style>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="step">
                     <div class="step-number">2</div>
                     <h3>Paste it here</h3>
                     <p>Drop it into the input and click download.</p>
+                    <div class="step-animation">
+                        <div class="animation-frame">
+                            <svg viewBox="0 0 640 480" style="width: 100%; height: auto;">
+                                <!-- Input field -->
+                                <rect x="40" y="180" width="560" height="50" rx="14" fill="#ffffff" stroke="#e5e7eb" />
+                                <!-- Caret -->
+                                <rect class="caret" x="60" y="190" width="2.5" height="30" fill="#10b981" />
+                                <!-- Ghost link moving into input -->
+                                <g class="ghost-link">
+                                    <rect x="220" y="110" width="220" height="34" rx="8" fill="#10b981" opacity="0.1" />
+                                    <text x="232" y="132" font-family="ui-monospace, SFMono-Regular, Menlo" font-size="14" fill="#047857">https://youtu.be/VIDEO_ID</text>
+                                </g>
+                                <!-- Final pasted text -->
+                                <text class="pasted" x="70" y="210" font-family="ui-monospace, SFMono-Regular, Menlo" font-size="14" fill="#6b7280">https://youtu.be/VIDEO_ID</text>
+
+                                <!-- Download button highlight -->
+                                <rect x="200" y="260" width="240" height="44" rx="10" class="cta" />
+                                <text x="240" y="288" font-family="system-ui, -apple-system" font-weight="600" font-size="16" fill="#ffffff">DOWNLOAD</text>
+
+                                <style>
+                                    .ghost-link { animation: dropIn 3s ease-in-out infinite; }
+                                    .pasted { opacity: 0; animation: showText 3s ease-in-out infinite; }
+                                    .caret { animation: blink .9s steps(1) infinite; }
+                                    .cta { fill: #10b981; opacity: 0.85; animation: pulseCta 3s ease-in-out infinite; }
+
+                                    @keyframes dropIn {
+                                        0%   { transform: translate(0, -22px); opacity: 0; }
+                                        20%  { transform: translate(0, -8px); opacity: .9; }
+                                        35%  { transform: translate(-160px, 90px); opacity: .95; }
+                                        40%  { opacity: 0; }
+                                        100% { opacity: 0; }
+                                    }
+                                    @keyframes showText {
+                                        0%, 35% { opacity: 0; }
+                                        45%, 100% { opacity: 1; }
+                                    }
+                                    @keyframes blink {
+                                        0%, 49% { opacity: 1; }
+                                        50%, 100% { opacity: 0; }
+                                    }
+                                    @keyframes pulseCta {
+                                        0%, 100% { transform: scale(1); }
+                                        50% { transform: scale(1.015); }
+                                    }
+
+                                    @media (prefers-reduced-motion: reduce) {
+                                        .ghost-link, .pasted, .caret, .cta { animation: none !important; }
+                                    }
+                                </style>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="step">
                     <div class="step-number">3</div>
                     <h3>Save the file</h3>
                     <p>Choose MP4 or MP3 and you're done.</p>
+                    <div class="step-animation">
+                        <div class="animation-frame">
+                            <svg viewBox="0 0 640 480" style="width: 100%; height: auto;">
+                                <!-- File icon -->
+                                <g class="file">
+                                    <rect x="290" y="110" width="60" height="76" rx="8" fill="#e5f7f1" stroke="#10b981" />
+                                    <polyline points="290,125 320,125 335,140 335,186 290,186" fill="none" stroke="#10b981" stroke-width="2" />
+                                </g>
+
+                                <!-- Progress track -->
+                                <rect x="120" y="260" width="400" height="16" rx="8" fill="#f3f4f6" />
+                                <!-- Progress fill -->
+                                <rect class="progress" x="120" y="260" width="0" height="16" rx="8" fill="#10b981" />
+
+                                <!-- Check circle -->
+                                <g class="check">
+                                    <circle cx="320" cy="300" r="20" fill="#10b981" />
+                                    <polyline points="312,300 320,308 332,292" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                                </g>
+
+                                <style>
+                                    .progress { animation: fill 3s ease-in-out infinite; }
+                                    .check { transform-origin: 320px 300px; opacity: 0; animation: pop 3s ease-in-out infinite; }
+                                    .file { transform-origin: 320px 148px; animation: float 3s ease-in-out infinite; }
+
+                                    @keyframes fill {
+                                        0% { width: 0px; }
+                                        70% { width: 400px; }
+                                        75%, 100% { width: 400px; }
+                                    }
+                                    @keyframes pop {
+                                        0%, 70% { opacity: 0; transform: scale(.8); }
+                                        78% { opacity: 1; transform: scale(1.05); }
+                                        100% { opacity: 1; transform: scale(1); }
+                                    }
+                                    @keyframes float {
+                                        0%, 100% { transform: translateY(0); }
+                                        50% { transform: translateY(-4px); }
+                                    }
+
+                                    @media (prefers-reduced-motion: reduce) {
+                                        .progress, .check, .file { animation: none !important; }
+                                    }
+                                </style>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>FAQ</h2>
+                <p>Quick answers to common questions.</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is this legal?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, downloading videos for personal use is generally legal in most countries. However, please respect copyright laws and only download content you have the right to access.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is it really free?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! Our YouTube downloader is 100% free to use. No hidden fees, no premium tiers, no registration required.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Do you support HD and MP3?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We support multiple quality options including HD (720p, 480p, 360p) and can convert videos to MP3 format for audio-only downloads.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What about privacy?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We respect your privacy. We don't store your videos, track your downloads, or collect personal information. Your downloads are processed locally.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <p>&copy; 2025 YT Downloader. All rights reserved.</p>
+                    <p class="footer-disclaimer">This tool is for personal use only. Ensure you have the right to download the content.</p>
+                </div>
+                <div class="footer-right">
+                    <a href="#" class="footer-link">Terms</a>
+                    <a href="#" class="footer-link">Privacy</a>
+                    <a href="#downloader" class="footer-link">Start download</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -775,6 +1133,25 @@
                         e.preventDefault();
                         this.downloadVideo();
                     }
+                });
+
+                // FAQ functionality
+                const faqQuestions = document.querySelectorAll('.faq-question');
+                faqQuestions.forEach(question => {
+                    question.addEventListener('click', () => {
+                        const faqItem = question.parentElement;
+                        const isActive = faqItem.classList.contains('active');
+                        
+                        // Close all FAQ items
+                        document.querySelectorAll('.faq-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        // Open clicked item if it wasn't active
+                        if (!isActive) {
+                            faqItem.classList.add('active');
+                        }
+                    });
                 });
             }
             
