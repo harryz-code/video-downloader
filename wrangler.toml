@@ -1,0 +1,17 @@
+name = "youtube-downloader-api"
+main = "functions/api.py"
+compatibility_date = "2024-01-01"
+
+[env.production]
+name = "youtube-downloader-api"
+
+[env.staging]
+name = "youtube-downloader-api-staging"
+
+[[env.production.routes]]
+pattern = "api.yourdomain.com/*"
+zone_name = "yourdomain.com"
+
+[[env.staging.routes]]
+pattern = "staging-api.yourdomain.com/*"
+zone_name = "yourdomain.com"
