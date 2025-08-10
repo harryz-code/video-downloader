@@ -373,7 +373,11 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     print("🚀 Starting Web-Based YouTube Downloader...")
-    print("📱 Open your browser and go to: http://localhost:8080")
+    
+    # Get port from environment variable (for Railway) or use 8080
+    port = int(os.environ.get('PORT', 8080))
+    
+    print(f"📱 Open your browser and go to: http://localhost:{port}")
     print("🌐 No installation required - works on any device!")
     
-    socketio.run(app, host='0.0.0.0', port=8080, debug=True)
+    socketio.run(app, host='0.0.0.0', port=port, debug=False)
