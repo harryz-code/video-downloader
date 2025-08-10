@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python web_downloader.py",
+    "startCommand": "python railway_app.py",
     "healthcheckPath": "/health"
   }
 }

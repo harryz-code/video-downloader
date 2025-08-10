@@ -385,4 +385,5 @@ if __name__ == '__main__':
     print(f"📱 Open your browser and go to: http://localhost:{port}")
     print("🌐 No installation required - works on any device!")
     
-    socketio.run(app, host='0.0.0.0', port=port, debug=False)
+    # Use regular Flask for Railway (more stable than SocketIO)
+    app.run(host='0.0.0.0', port=port, debug=False)
