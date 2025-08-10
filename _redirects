@@ -1,1 +1,1 @@
-/api/*  https://youtube-downloader-api.your-subdomain.workers.dev/api/:splat  200
+/api/*  https://youtube-downloader-api.youtube-download.workers.dev/api/:splat  200
