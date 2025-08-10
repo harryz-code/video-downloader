@@ -2,9 +2,6 @@
   "name": "youtube-downloader",
   "version": "1.0.0",
   "description": "Free YouTube Video Downloader",
-  "scripts": {
-    "build": "mkdir -p public && cp templates/web_downloader.html public/index.html"
-  },
   "keywords": ["youtube", "downloader", "video"],
   "author": "Your Name",
   "license": "MIT"
