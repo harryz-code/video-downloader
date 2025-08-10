@@ -19,13 +19,5 @@
       "src": "/(.*)",
       "dest": "/public/index.html"
     }
-  ],
-  "functions": {
-    "api/download.py": {
-      "maxDuration": 300
-    },
-    "api/list_formats.py": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
