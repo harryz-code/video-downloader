@@ -23,9 +23,9 @@ function extractVideoId(url) {
   return null;
 }
 
-function handleValidateUrl(request) {
+async function handleValidateUrl(request) {
   try {
-    const data = request.json();
+    const data = await request.json();
     const url = data.url?.trim() || '';
     
     const isValid = validateYoutubeUrl(url);
@@ -44,9 +44,9 @@ function handleValidateUrl(request) {
   }
 }
 
-function handleListFormats(request) {
+async function handleListFormats(request) {
   try {
-    const data = request.json();
+    const data = await request.json();
     const url = data.url?.trim() || '';
     
     if (!validateYoutubeUrl(url)) {
@@ -62,9 +62,9 @@ function handleListFormats(request) {
       success: true,
       title: 'YouTube Video',
       formats: [
-        {quality: '720p', ext: 'mp4', size: '~15.2 MB (estimated)', format_id: '22'},
-        {quality: '480p', ext: 'mp4', size: '~8.5 MB (estimated)', format_id: '18'},
-        {quality: '360p', ext: 'mp4', size: '~5.1 MB (estimated)', format_id: '17'}
+        {quality: '720p', ext: 'mp4', size: '~8.5 MB (estimated)', format_id: '22'},
+        {quality: '480p', ext: 'mp4', size: '~5.1 MB (estimated)', format_id: '18'},
+        {quality: '360p', ext: 'mp4', size: '~3.2 MB (estimated)', format_id: '17'}
       ]
     };
   } catch (error) {
@@ -75,9 +75,9 @@ function handleListFormats(request) {
   }
 }
 
-function handleDownload(request) {
+async function handleDownload(request) {
   try {
-    const data = request.json();
+    const data = await request.json();
     const url = data.url?.trim() || '';
     const quality = data.quality || 'auto';
     
@@ -94,7 +94,7 @@ function handleDownload(request) {
       success: true,
       message: 'Download functionality will be added in the next update',
       title: 'YouTube Video',
-      size: '~15.2 MB (estimated)',
+      size: '~8.5 MB (estimated)',
       filename: 'video.mp4'
     };
   } catch (error) {
@@ -127,11 +127,11 @@ async function handleRequest(request) {
     let result;
     
     if (path === 'validate_url') {
-      result = handleValidateUrl(request);
+      result = await handleValidateUrl(request);
     } else if (path === 'list_formats') {
-      result = handleListFormats(request);
+      result = await handleListFormats(request);
     } else if (path === 'download') {
-      result = handleDownload(request);
+      result = await handleDownload(request);
     } else if (path === 'open_folder') {
       // For now, return success since we can't open folders in browser
       result = {
