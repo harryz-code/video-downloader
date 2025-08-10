@@ -243,6 +243,11 @@ def index():
     """Main page with web-based downloader"""
     return render_template('web_downloader.html')
 
+@app.route('/health')
+def health():
+    """Health check endpoint for Railway"""
+    return jsonify({'status': 'healthy', 'message': 'YouTube Downloader API is running'})
+
 @app.route('/api/validate_url', methods=['POST'])
 def validate_url():
     """Validate YouTube URL"""
