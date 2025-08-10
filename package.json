@@ -4,5 +4,9 @@
   "description": "Free YouTube Video Downloader",
   "keywords": ["youtube", "downloader", "video"],
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "dev": "echo 'Static site - no dev server needed'",
+    "build": "echo 'Static site - no build needed'"
+  }
 }

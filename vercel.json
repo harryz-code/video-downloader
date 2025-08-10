@@ -1,19 +1,23 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/**/*.py",
-      "use": "@vercel/python"
+  "functions": {
+    "api/test.py": {
+      "runtime": "python3.9"
     },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
+    "api/validate_url.py": {
+      "runtime": "python3.9"
+    },
+    "api/list_formats.py": {
+      "runtime": "python3.9"
+    },
+    "api/download.py": {
+      "runtime": "python3.9"
     }
-  ],
+  },
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "/api/$1.py"
     },
     {
       "src": "/(.*)",
