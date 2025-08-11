@@ -383,8 +383,10 @@ def download_file(session_id):
         if not session_data:
             return jsonify({'success': False, 'error': 'Session not found'})
         
-        # Create a temporary download manager with session data
-        download_mgr = type('DownloadManager', (), session_data)()
+        # Create a proper DownloadManager instance with session data
+        download_mgr = DownloadManager(session_id)
+        for key, value in session_data.items():
+            setattr(download_mgr, key, value)
     
     if download_mgr.status != 'completed':
         return jsonify({'success': False, 'error': f'Download not completed. Status: {download_mgr.status}'})
@@ -403,12 +405,16 @@ def download_file(session_id):
     print(f"Serving file: {download_mgr.filepath} ({file_size} bytes)")
     
     # Serve the file directly to the user's browser (triggers browser download)
-    return send_file(
-        download_mgr.filepath,
-        as_attachment=True,
-        download_name=download_mgr.filename,
-        mimetype='video/mp4'
-    )
+    try:
+        return send_file(
+            download_mgr.filepath,
+            as_attachment=True,
+            download_name=download_mgr.filename,
+            mimetype='video/mp4'
+        )
+    except Exception as e:
+        print(f"Error serving file: {e}")
+        return jsonify({'success': False, 'error': f'Error serving file: {str(e)}'})
 
 @app.route('/api/open_folder', methods=['POST'])
 def open_folder():
