@@ -97,6 +97,7 @@ class DownloadManager:
             self.status = "processing"
             # Set progress to 100% when download finishes
             self.progress = 100.0
+            self.downloaded_bytes = self.total_bytes  # Ensure bytes match
             if hasattr(self, 'session_id'):
                 save_session(self.session_id, self)
                 print(f"Download finished, progress set to 100%")
@@ -150,25 +151,39 @@ class DownloadManager:
                 else:
                     # Download the video
                     info = ydl.extract_info(url, download=True)
-                    self.filename = info.get('title', 'video') + '.' + info.get('ext', 'mp4')
-                    self.filepath = os.path.join(download_dir, self.filename)
                     
                     # Wait a moment to ensure file is fully written
                     import time
-                    time.sleep(1)
+                    time.sleep(2)
                     
-                    # Verify file exists and has expected size
-                    if os.path.exists(self.filepath):
-                        actual_size = os.path.getsize(self.filepath)
-                        if self.total_bytes > 0 and abs(actual_size - self.total_bytes) > 1024:  # Allow 1KB difference
-                            print(f"Warning: File size mismatch. Expected: {self.total_bytes}, Actual: {actual_size}")
+                    # Find the actual downloaded file
+                    files = os.listdir(download_dir)
+                    if files:
+                        # Get the most recently modified file (the downloaded video)
+                        files_with_paths = [(f, os.path.join(download_dir, f)) for f in files]
+                        files_with_paths.sort(key=lambda x: os.path.getmtime(x[1]), reverse=True)
                         
-                        self.status = "completed"
-                        print(f"Download completed: {self.filename} ({actual_size} bytes)")
+                        self.filename = files_with_paths[0][0]
+                        self.filepath = files_with_paths[0][1]
+                        
+                        # Verify file exists and has reasonable size
+                        if os.path.exists(self.filepath):
+                            actual_size = os.path.getsize(self.filepath)
+                            if actual_size > 1024:  # File should be at least 1KB
+                                self.status = "completed"
+                                print(f"Download completed: {self.filename} ({actual_size} bytes)")
+                            else:
+                                self.status = "error"
+                                self.error = "Downloaded file is too small or corrupted"
+                                print(f"Error: Downloaded file is too small: {actual_size} bytes")
+                        else:
+                            self.status = "error"
+                            self.error = "File not found after download"
+                            print(f"Error: File not found after download: {self.filepath}")
                     else:
                         self.status = "error"
-                        self.error = "File not found after download"
-                        print(f"Error: File not found after download: {self.filepath}")
+                        self.error = "No files found in download directory"
+                        print(f"Error: No files found in download directory: {download_dir}")
                     
                     # Save final session data
                     if hasattr(self, 'session_id'):
