@@ -1296,7 +1296,10 @@
                     this.showAlert(`Video downloaded: ${data.filename}`, 'success');
                     
                     // Force progress bar to 100% when download is complete
-                    document.getElementById('progressBar').style.width = '100%';
+                    const progressBar = document.getElementById('progressBar');
+                    progressBar.style.width = '100%';
+                    progressBar.setAttribute('aria-valuenow', 100);
+                    progressBar.textContent = '100%';
                     document.getElementById('progressDetails').textContent = '100% Complete';
                     
                     // Show download button for cloud deployment
