@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import yt_dlp
 import os
 import tempfile
@@ -11,8 +11,42 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 
-# Store download sessions
+# Store download sessions with file persistence
 download_sessions = {}
+import pickle
+import json
+
+def save_session(session_id, download_mgr):
+    """Save session data to file"""
+    try:
+        session_data = {
+            'status': download_mgr.status,
+            'progress': download_mgr.progress,
+            'downloaded_bytes': download_mgr.downloaded_bytes,
+            'total_bytes': download_mgr.total_bytes,
+            'speed': download_mgr.speed,
+            'eta': download_mgr.eta,
+            'filename': download_mgr.filename,
+            'filepath': getattr(download_mgr, 'filepath', None),
+            'error': download_mgr.error
+        }
+        
+        session_file = f"/tmp/session_{session_id}.json"
+        with open(session_file, 'w') as f:
+            json.dump(session_data, f)
+    except Exception as e:
+        print(f"Error saving session: {e}")
+
+def load_session(session_id):
+    """Load session data from file"""
+    try:
+        session_file = f"/tmp/session_{session_id}.json"
+        if os.path.exists(session_file):
+            with open(session_file, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"Error loading session: {e}")
+    return None
 
 class DownloadManager:
     def __init__(self, session_id):
@@ -52,16 +86,22 @@ class DownloadManager:
             if '_eta_str' in d:
                 self.eta = d.get('eta_str', 'N/A')
             
+            # Save session data
+            if hasattr(self, 'session_id'):
+                save_session(self.session_id, self)
+            
         elif d['status'] == 'finished':
             self.status = "processing"
+            if hasattr(self, 'session_id'):
+                save_session(self.session_id, self)
     
     def download_video(self, url, quality, format_only=False):
         """Download video with specified quality or format ID"""
         try:
             self.status = "starting"
             
-            # Create temporary directory for downloads
-            temp_dir = tempfile.mkdtemp()
+            # Use temporary directory for cloud deployment
+            download_dir = tempfile.mkdtemp()
             
             # Configure yt-dlp options
             if quality == "auto":
@@ -79,10 +119,14 @@ class DownloadManager:
             
             ydl_opts = {
                 'format': format_spec,
-                'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
+                'outtmpl': os.path.join(download_dir, '%(title)s.%(ext)s'),
                 'progress_hooks': [self.progress_hook],
                 'quiet': False,
-                'no_warnings': False
+                'no_warnings': False,
+                'extractor_retries': 3,
+                'fragment_retries': 3,
+                'retries': 3,
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
             }
             
             if format_only:
@@ -101,12 +145,14 @@ class DownloadManager:
                     # Download the video
                     info = ydl.extract_info(url, download=True)
                     self.filename = info.get('title', 'video') + '.' + info.get('ext', 'mp4')
+                    self.filepath = os.path.join(download_dir, self.filename)
                     self.status = "completed"
                     
                     return {
                         'success': True,
                         'title': info.get('title', 'Unknown'),
                         'filename': self.filename,
+                        'filepath': self.filepath,
                         'size': f"{self.total_bytes / (1024*1024):.1f} MB"
                     }
                     
@@ -249,6 +295,72 @@ def start_download():
         'session_id': session_id,
         'message': 'Download started'
     })
+
+@app.route('/api/progress/<session_id>', methods=['GET'])
+def get_progress(session_id):
+    """Get download progress for a session"""
+    # First check in-memory sessions
+    if session_id in download_sessions:
+        download_mgr = download_sessions[session_id]
+        return jsonify({
+            'success': True,
+            'status': download_mgr.status,
+            'progress': download_mgr.progress,
+            'downloaded_bytes': download_mgr.downloaded_bytes,
+            'total_bytes': download_mgr.total_bytes,
+            'speed': download_mgr.speed,
+            'eta': download_mgr.eta,
+            'filename': download_mgr.filename,
+            'filepath': getattr(download_mgr, 'filepath', None),
+            'session_id': session_id,
+            'error': download_mgr.error
+        })
+    
+    # If not in memory, try to load from file
+    session_data = load_session(session_id)
+    if session_data:
+        return jsonify({
+            'success': True,
+            'session_id': session_id,
+            **session_data
+        })
+    
+    return jsonify({
+        'success': False,
+        'error': 'Session not found'
+    })
+
+@app.route('/api/download_file/<session_id>', methods=['GET'])
+def download_file(session_id):
+    """Download the completed file"""
+    # First check in-memory sessions
+    if session_id in download_sessions:
+        download_mgr = download_sessions[session_id]
+    else:
+        # Try to load from file
+        session_data = load_session(session_id)
+        if not session_data:
+            return jsonify({'success': False, 'error': 'Session not found'})
+        
+        # Create a temporary download manager with session data
+        download_mgr = type('DownloadManager', (), session_data)()
+    
+    if download_mgr.status != 'completed':
+        return jsonify({'success': False, 'error': 'Download not completed'})
+    
+    if not hasattr(download_mgr, 'filepath') or not download_mgr.filepath:
+        return jsonify({'success': False, 'error': 'File not found'})
+    
+    if not os.path.exists(download_mgr.filepath):
+        return jsonify({'success': False, 'error': 'File not found on server'})
+    
+    # Serve the file directly to the user's browser (triggers browser download)
+    return send_file(
+        download_mgr.filepath,
+        as_attachment=True,
+        download_name=download_mgr.filename,
+        mimetype='video/mp4'
+    )
 
 @app.route('/api/open_folder', methods=['POST'])
 def open_folder():

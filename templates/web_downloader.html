@@ -1105,16 +1105,12 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Socket.IO -->
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    
     <script>
         class YouTubeDownloader {
             constructor() {
-                this.socket = io();
                 this.currentSessionId = null;
+                this.progressInterval = null;
                 this.initializeEventListeners();
-                this.initializeSocket();
             }
             
             initializeEventListeners() {
@@ -1151,18 +1147,37 @@
                 });
             }
             
-            initializeSocket() {
-                this.socket.on('connect', () => {
-                    console.log('Connected to server');
-                });
+            startProgressPolling(sessionId) {
+                // Clear any existing interval
+                if (this.progressInterval) {
+                    clearInterval(this.progressInterval);
+                }
                 
-                this.socket.on('download_progress', (data) => {
-                    this.updateProgress(data);
-                });
-                
-                this.socket.on('disconnect', () => {
-                    console.log('Disconnected from server');
-                });
+                // Start polling for progress updates
+                this.progressInterval = setInterval(async () => {
+                    try {
+                        const response = await fetch(`/api/progress/${sessionId}`);
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            this.updateProgress(data);
+                            
+                            // Stop polling if download is complete or failed
+                            if (data.status === 'completed' || data.status === 'error') {
+                                clearInterval(this.progressInterval);
+                                this.progressInterval = null;
+                            }
+                        } else {
+                            console.log('Progress polling failed:', data.error);
+                            clearInterval(this.progressInterval);
+                            this.progressInterval = null;
+                        }
+                    } catch (error) {
+                        console.error('Error polling progress:', error);
+                        clearInterval(this.progressInterval);
+                        this.progressInterval = null;
+                    }
+                }, 1000); // Poll every second
             }
             
             validateUrl() {
@@ -1217,8 +1232,8 @@
                     // Show progress section
                     document.getElementById('progressSection').style.display = 'block';
                     
-                    // Start download with quality selection
-                    const response = await fetch('https://youtube-downloader-api.youtube-download.workers.dev/api/download', {
+                            // Start download with quality selection
+        const response = await fetch('/api/download', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1230,7 +1245,7 @@
                     
                     if (result.success) {
                         this.currentSessionId = result.session_id;
-                        this.socket.emit('join_download_session', { session_id: this.currentSessionId });
+                        this.startProgressPolling(this.currentSessionId);
                         
                         this.showAlert(`Download started successfully! (${quality})`, 'success');
                         this.updateStatus(`Download started... (${quality})`);
@@ -1251,25 +1266,26 @@
             
             updateProgress(data) {
                 if (data.status === 'downloading') {
-                    // Update progress bar
+                    // Update progress bar with better visual feedback
                     const progressBar = document.getElementById('progressBar');
-                    progressBar.style.width = `${data.progress}%`;
-                    progressBar.setAttribute('aria-valuenow', data.progress);
+                    const progressPercent = Math.round(data.progress);
+                    progressBar.style.width = `${progressPercent}%`;
+                    progressBar.setAttribute('aria-valuenow', progressPercent);
                     
-                    // Update progress details
+                    // Add progress percentage to the progress bar
+                    progressBar.textContent = `${progressPercent}%`;
+                    
+                    // Update progress details with better formatting
                     const progressDetails = document.getElementById('progressDetails');
-                    progressDetails.textContent = `Downloaded: ${data.downloaded_mb.toFixed(1)} MB / ${data.total_mb.toFixed(1)} MB (${data.progress.toFixed(1)}%)`;
+                    const downloadedMB = (data.downloaded_bytes / (1024 * 1024)).toFixed(1);
+                    const totalMB = (data.total_bytes / (1024 * 1024)).toFixed(1);
+                    progressDetails.textContent = `${downloadedMB} MB / ${totalMB} MB (${data.progress.toFixed(1)}%)`;
                     
-                    // Update download info
+                    // Update download info with better formatting
                     const downloadInfo = document.getElementById('downloadInfo');
-                    downloadInfo.textContent = `Speed: ${data.speed} | ETA: ${data.eta}`;
+                    downloadInfo.innerHTML = `<i class="fas fa-tachometer-alt"></i> Speed: ${data.speed} | <i class="fas fa-clock"></i> ETA: ${data.eta}`;
                     
-                    // Show download location during download
-                    if (data.download_dir) {
-                        this.showDownloadLocation(data.download_dir);
-                    }
-                    
-                    this.updateStatus('Downloading...');
+                    this.updateStatus(`Downloading... ${progressPercent}%`);
                     
                 } else if (data.status === 'processing') {
                     this.updateStatus('Processing video...');
@@ -1278,24 +1294,19 @@
                     this.updateStatus('Starting download...');
                     this.showAlert('Download started!', 'info');
                     
-                    // Show download location info immediately
-                    if (data.download_dir) {
-                        this.showDownloadLocation(data.download_dir);
-                    }
-                    
                 } else if (data.status === 'completed') {
                     this.updateStatus('Download completed successfully!');
                     this.showAlert(`Video downloaded: ${data.filename}`, 'success');
                     
-                    // Show download location
-                    if (data.filepath) {
-                        this.showDownloadLocation(data.filepath);
+                    // Show download button for cloud deployment
+                    if (data.session_id) {
+                        this.showDownloadButton(data.session_id, data.filename);
                     }
                     
-                    // Reset progress
+                    // Reset progress after longer delay
                     setTimeout(() => {
                         this.resetProgress();
-                    }, 3000);
+                    }, 30000); // Show for 30 seconds
                     
                 } else if (data.status === 'error') {
                     this.updateStatus('Download failed');
@@ -1321,25 +1332,27 @@
                 this.updateStatus('Ready to download');
             }
             
-            showDownloadLocation(filepath) {
+            showDownloadButton(sessionId, filename) {
                 const downloadLocationInfo = document.getElementById('downloadLocationInfo');
                 const downloadPath = document.getElementById('downloadPath');
                 
-                // Extract just the folder path (remove filename)
-                // Handle both forward slashes and backslashes
-                const lastSlashIndex = Math.max(
-                    filepath.lastIndexOf('/'),
-                    filepath.lastIndexOf('\\')
-                );
-                
-                if (lastSlashIndex > 0) {
-                    const folderPath = filepath.substring(0, lastSlashIndex);
-                    downloadPath.textContent = folderPath;
-                } else {
-                    downloadPath.textContent = filepath; // Fallback if no slash found
-                }
+                // Update the display to show prominent download button
+                downloadPath.innerHTML = `
+                    <div class="text-center">
+                        <button class="btn btn-success btn-lg" onclick="app.downloadFile('${sessionId}')">
+                            <i class="fas fa-download"></i> Download Video
+                        </button>
+                        <p class="text-muted mt-2">${filename}</p>
+                        <small class="text-muted">Click to download to your computer</small>
+                    </div>
+                `;
                 
                 downloadLocationInfo.style.display = 'block';
+            }
+            
+            downloadFile(sessionId) {
+                // Trigger file download
+                window.open(`/api/download_file/${sessionId}`, '_blank');
             }
             
             openDownloadFolder() {
@@ -1349,7 +1362,7 @@
                 this.showAlert('Opening download folder...', 'info');
                 
                 // Send request to backend to open folder
-                                        fetch('https://youtube-downloader-api.youtube-download.workers.dev/api/open_folder', {
+                                        fetch('/api/open_folder', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

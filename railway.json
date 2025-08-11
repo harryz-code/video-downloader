@@ -6,5 +6,15 @@
   "deploy": {
     "startCommand": "python railway_app.py",
     "healthcheckPath": "/health"
+  },
+  "nixpacksConfig": {
+    "phases": {
+      "setup": {
+        "nixPkgs": ["python3", "pip"]
+      },
+      "install": {
+        "cmds": ["pip install --no-cache-dir -r requirements.txt"]
+      }
+    }
   }
 }
