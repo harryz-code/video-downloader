@@ -1351,8 +1351,27 @@
             }
             
             downloadFile(sessionId) {
-                // Trigger file download
-                window.open(`/api/download_file/${sessionId}`, '_blank');
+                // Show loading state
+                this.showAlert('Preparing download...', 'info');
+                
+                // Check if file is ready first
+                fetch(`/api/download_file/${sessionId}`)
+                    .then(response => {
+                        if (response.ok) {
+                            // File is ready, trigger download
+                            window.open(`/api/download_file/${sessionId}`, '_blank');
+                            this.showAlert('Download started!', 'success');
+                        } else {
+                            // Handle error
+                            return response.json().then(data => {
+                                throw new Error(data.error || 'Download failed');
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Download error:', error);
+                        this.showAlert(`Download error: ${error.message}`, 'danger');
+                    });
             }
             
             openDownloadFolder() {

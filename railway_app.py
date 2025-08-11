@@ -66,15 +66,7 @@ class DownloadManager:
             # Update status first
             self.status = "downloading"
             
-            # Update progress
-            if '_percent_str' in d:
-                try:
-                    percent = float(d['_percent_str'].replace('%', ''))
-                    self.progress = percent
-                except:
-                    pass
-            
-            # Update bytes info
+            # Update bytes info first
             downloaded = d.get('downloaded_bytes', 0)
             total = d.get('total_bytes', 0)
             
@@ -82,6 +74,13 @@ class DownloadManager:
                 self.downloaded_bytes = downloaded
                 self.total_bytes = total
                 self.progress = (downloaded / total) * 100
+            elif '_percent_str' in d:
+                # Fallback to percentage string if bytes not available
+                try:
+                    percent = float(d['_percent_str'].replace('%', ''))
+                    self.progress = percent
+                except:
+                    pass
             
             # Update speed and ETA
             if '_speed_str' in d:
@@ -150,12 +149,27 @@ class DownloadManager:
                     info = ydl.extract_info(url, download=True)
                     self.filename = info.get('title', 'video') + '.' + info.get('ext', 'mp4')
                     self.filepath = os.path.join(download_dir, self.filename)
-                    self.status = "completed"
+                    
+                    # Wait a moment to ensure file is fully written
+                    import time
+                    time.sleep(1)
+                    
+                    # Verify file exists and has expected size
+                    if os.path.exists(self.filepath):
+                        actual_size = os.path.getsize(self.filepath)
+                        if self.total_bytes > 0 and abs(actual_size - self.total_bytes) > 1024:  # Allow 1KB difference
+                            print(f"Warning: File size mismatch. Expected: {self.total_bytes}, Actual: {actual_size}")
+                        
+                        self.status = "completed"
+                        print(f"Download completed: {self.filename} ({actual_size} bytes)")
+                    else:
+                        self.status = "error"
+                        self.error = "File not found after download"
+                        print(f"Error: File not found after download: {self.filepath}")
                     
                     # Save final session data
                     if hasattr(self, 'session_id'):
                         save_session(self.session_id, self)
-                        print(f"Download completed: {self.filename}")
                     
                     return {
                         'success': True,
@@ -355,13 +369,20 @@ def download_file(session_id):
         download_mgr = type('DownloadManager', (), session_data)()
     
     if download_mgr.status != 'completed':
-        return jsonify({'success': False, 'error': 'Download not completed'})
+        return jsonify({'success': False, 'error': f'Download not completed. Status: {download_mgr.status}'})
     
     if not hasattr(download_mgr, 'filepath') or not download_mgr.filepath:
-        return jsonify({'success': False, 'error': 'File not found'})
+        return jsonify({'success': False, 'error': 'File path not found'})
     
     if not os.path.exists(download_mgr.filepath):
-        return jsonify({'success': False, 'error': 'File not found on server'})
+        return jsonify({'success': False, 'error': f'File not found on server: {download_mgr.filepath}'})
+    
+    # Check file size to ensure it's not empty
+    file_size = os.path.getsize(download_mgr.filepath)
+    if file_size == 0:
+        return jsonify({'success': False, 'error': 'File is empty (0 bytes)'})
+    
+    print(f"Serving file: {download_mgr.filepath} ({file_size} bytes)")
     
     # Serve the file directly to the user's browser (triggers browser download)
     return send_file(
