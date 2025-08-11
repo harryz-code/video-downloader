@@ -1295,6 +1295,10 @@
                     this.updateStatus('Download completed successfully!');
                     this.showAlert(`Video downloaded: ${data.filename}`, 'success');
                     
+                    // Force progress bar to 100% when download is complete
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('progressDetails').textContent = '100% Complete';
+                    
                     // Show download button for cloud deployment
                     if (data.session_id) {
                         this.showDownloadButton(data.session_id, data.filename);
