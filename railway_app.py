@@ -63,6 +63,9 @@ class DownloadManager:
     def progress_hook(self, d):
         """Progress callback for yt-dlp"""
         if d['status'] == 'downloading':
+            # Update status first
+            self.status = "downloading"
+            
             # Update progress
             if '_percent_str' in d:
                 try:
@@ -89,6 +92,7 @@ class DownloadManager:
             # Save session data
             if hasattr(self, 'session_id'):
                 save_session(self.session_id, self)
+                print(f"Progress update: {self.progress:.1f}% - {self.speed}")
             
         elif d['status'] == 'finished':
             self.status = "processing"
@@ -147,6 +151,11 @@ class DownloadManager:
                     self.filename = info.get('title', 'video') + '.' + info.get('ext', 'mp4')
                     self.filepath = os.path.join(download_dir, self.filename)
                     self.status = "completed"
+                    
+                    # Save final session data
+                    if hasattr(self, 'session_id'):
+                        save_session(self.session_id, self)
+                        print(f"Download completed: {self.filename}")
                     
                     return {
                         'success': True,
