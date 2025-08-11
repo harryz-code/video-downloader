@@ -95,8 +95,11 @@ class DownloadManager:
             
         elif d['status'] == 'finished':
             self.status = "processing"
+            # Set progress to 100% when download finishes
+            self.progress = 100.0
             if hasattr(self, 'session_id'):
                 save_session(self.session_id, self)
+                print(f"Download finished, progress set to 100%")
     
     def download_video(self, url, quality, format_only=False):
         """Download video with specified quality or format ID"""

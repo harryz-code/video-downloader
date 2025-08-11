@@ -772,9 +772,6 @@
                                 <strong>Download Location:</strong>
                                 <span id="downloadPath" class="ms-2 text-muted"></span>
                             </div>
-                            <button class="btn btn-sm btn-outline-primary" onclick="app.openDownloadFolder()">
-                                <i class="fas fa-external-link-alt"></i> Open Folder
-                            </button>
                         </div>
                     </div>
                     
@@ -1343,7 +1340,6 @@
                             <i class="fas fa-download"></i> Download Video
                         </button>
                         <p class="text-muted mt-2">${filename}</p>
-                        <small class="text-muted">Click to download to your computer</small>
                     </div>
                 `;
                 
@@ -1374,23 +1370,7 @@
                     });
             }
             
-            openDownloadFolder() {
-                // Try to open the download folder
-                const downloadPath = document.getElementById('downloadPath').textContent;
-                
-                this.showAlert('Opening download folder...', 'info');
-                
-                // Send request to backend to open folder
-                                        fetch('/api/open_folder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ path: downloadPath })
-                }).catch(error => {
-                    console.log('Could not open folder automatically');
-                });
-            }
+
         }
 
         // Initialize the app
