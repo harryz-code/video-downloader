@@ -404,14 +404,28 @@ def download_file(session_id):
     
     print(f"Serving file: {download_mgr.filepath} ({file_size} bytes)")
     
-    # Serve the file directly to the user's browser (triggers browser download)
+    # Serve the file with streaming for better performance
     try:
-        return send_file(
-            download_mgr.filepath,
-            as_attachment=True,
-            download_name=download_mgr.filename,
-            mimetype='video/mp4'
+        def generate():
+            with open(download_mgr.filepath, 'rb') as f:
+                while True:
+                    chunk = f.read(8192)  # 8KB chunks
+                    if not chunk:
+                        break
+                    yield chunk
+        
+        response = app.response_class(
+            generate(),
+            mimetype='video/mp4',
+            headers={
+                'Content-Disposition': f'attachment; filename="{download_mgr.filename}"',
+                'Content-Length': str(file_size),
+                'Accept-Ranges': 'bytes',
+                'Cache-Control': 'no-cache'
+            }
         )
+        
+        return response
     except Exception as e:
         print(f"Error serving file: {e}")
         return jsonify({'success': False, 'error': f'Error serving file: {str(e)}'})
