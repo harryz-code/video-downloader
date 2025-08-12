@@ -1357,16 +1357,8 @@
                 // Show loading state
                 this.showAlert('Preparing download...', 'info');
                 
-                // Create a temporary link element to trigger download
-                const link = document.createElement('a');
-                link.href = `/api/download_file/${sessionId}`;
-                link.download = ''; // Let the server set the filename
-                link.style.display = 'none';
-                
-                // Add to DOM, click, and remove
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                // Try direct navigation to trigger download
+                window.location.href = `/api/download_file/${sessionId}`;
                 
                 this.showAlert('Download started!', 'success');
             }
