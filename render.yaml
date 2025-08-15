@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: video-downloader
+    env: python
+    plan: free
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: python railway_app.py
+    envVars:
+      - key: PORT
+        value: 10000
+    healthCheckPath: /health
