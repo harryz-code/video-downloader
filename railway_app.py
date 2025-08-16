@@ -567,6 +567,11 @@ def open_folder():
 if __name__ == '__main__':
     print("🚀 Starting Web-Based YouTube Downloader with Analytics...")
     
+    # Debug: Print all registered routes
+    print("📋 Registered routes:")
+    for rule in app.url_map.iter_rules():
+        print(f"  {rule.endpoint}: {rule.rule} [{', '.join(rule.methods)}]")
+    
     # Get port from environment variable (for Railway) or use 8080
     port = int(os.environ.get('PORT', 8080))
     
