@@ -565,12 +565,13 @@ def open_folder():
         return jsonify({'success': False, 'error': f'Failed to open folder: {str(e)}'})
 
 if __name__ == '__main__':
-    print("🚀 Starting Web-Based YouTube Downloader...")
+    print("🚀 Starting Web-Based YouTube Downloader with Analytics...")
     
     # Get port from environment variable (for Railway) or use 8080
     port = int(os.environ.get('PORT', 8080))
     
     print(f"📱 Open your browser and go to: http://localhost:{port}")
     print("🌐 No installation required - works on any device!")
+    print("📊 Analytics available at /analytics")
     
     app.run(host='0.0.0.0', port=port, debug=False)
