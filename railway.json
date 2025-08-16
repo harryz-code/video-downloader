@@ -5,7 +5,8 @@
   },
   "deploy": {
     "startCommand": "python railway_app.py",
-    "healthcheckPath": "/health"
+    "healthcheckPath": "/health",
+    "restartPolicyType": "ON_FAILURE"
   },
   "nixpacksConfig": {
     "phases": {
