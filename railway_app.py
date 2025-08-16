@@ -294,7 +294,7 @@ def index():
 @app.route('/health')
 def health():
     """Health check endpoint for Railway"""
-    return jsonify({'status': 'healthy', 'message': 'YouTube Downloader API is running'})
+    return jsonify({'status': 'healthy', 'message': 'YouTube Downloader API is running', 'version': '1.1'})
 
 @app.route('/analytics')
 def analytics():
