@@ -6,10 +6,66 @@ import threading
 import time
 import uuid
 import json
+import logging
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Simple analytics storage
+analytics_file = "/tmp/analytics.json"
+
+def log_visit(page, user_ip=None):
+    """Log page visits for basic analytics"""
+    try:
+        # Load existing data
+        if os.path.exists(analytics_file):
+            with open(analytics_file, 'r') as f:
+                data = json.load(f)
+        else:
+            data = {"visits": [], "downloads": 0}
+        
+        # Add new visit
+        visit = {
+            "timestamp": datetime.now().isoformat(),
+            "page": page,
+            "ip": user_ip or request.remote_addr if request else "unknown"
+        }
+        data["visits"].append(visit)
+        
+        # Keep only last 1000 visits
+        data["visits"] = data["visits"][-1000:]
+        
+        # Save data
+        with open(analytics_file, 'w') as f:
+            json.dump(data, f)
+            
+        logger.info(f"Visit logged: {page} from {visit['ip']}")
+    except Exception as e:
+        logger.error(f"Analytics logging error: {e}")
+
+def increment_downloads():
+    """Track download count"""
+    try:
+        if os.path.exists(analytics_file):
+            with open(analytics_file, 'r') as f:
+                data = json.load(f)
+        else:
+            data = {"visits": [], "downloads": 0}
+        
+        data["downloads"] = data.get("downloads", 0) + 1
+        
+        with open(analytics_file, 'w') as f:
+            json.dump(data, f)
+            
+        logger.info(f"Download count: {data['downloads']}")
+    except Exception as e:
+        logger.error(f"Download tracking error: {e}")
 
 # Store download sessions with file persistence
 download_sessions = {}
@@ -232,12 +288,57 @@ def validate_youtube_url(url):
 @app.route('/')
 def index():
     """Main page with web-based downloader"""
+    log_visit("homepage")
     return render_template('web_downloader.html')
 
 @app.route('/health')
 def health():
     """Health check endpoint for Railway"""
     return jsonify({'status': 'healthy', 'message': 'YouTube Downloader API is running'})
+
+@app.route('/analytics')
+def analytics():
+    """View basic analytics (simple auth recommended for production)"""
+    try:
+        if os.path.exists(analytics_file):
+            with open(analytics_file, 'r') as f:
+                data = json.load(f)
+        else:
+            data = {"visits": [], "downloads": 0}
+        
+        # Calculate stats
+        total_visits = len(data.get("visits", []))
+        total_downloads = data.get("downloads", 0)
+        
+        # Recent visits (last 24 hours)
+        from datetime import datetime, timedelta
+        now = datetime.now()
+        day_ago = now - timedelta(days=1)
+        
+        recent_visits = []
+        for visit in data.get("visits", []):
+            try:
+                visit_time = datetime.fromisoformat(visit["timestamp"])
+                if visit_time > day_ago:
+                    recent_visits.append(visit)
+            except:
+                continue
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'total_visits': total_visits,
+                'total_downloads': total_downloads,
+                'visits_24h': len(recent_visits),
+                'recent_visits': recent_visits[-20:]  # Last 20 visits
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 @app.route('/api/validate_url', methods=['POST'])
 def validate_url():
@@ -318,6 +419,10 @@ def start_download():
     
     if not url:
         return jsonify({'success': False, 'error': 'URL is required'})
+    
+    # Track download attempt
+    increment_downloads()
+    log_visit("download_started")
     
     # Create download manager for this session
     session_id = str(uuid.uuid4())
