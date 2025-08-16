@@ -298,7 +298,14 @@ def health():
 
 @app.route('/analytics')
 def analytics():
-    """View basic analytics (simple auth recommended for production)"""
+    """View basic analytics with password protection"""
+    # Simple password protection
+    auth = request.authorization
+    if not auth or auth.password != 'analytics2025':
+        return ('Analytics Dashboard - Please enter password', 401, {
+            'WWW-Authenticate': 'Basic realm="Analytics Dashboard"'
+        })
+    
     try:
         if os.path.exists(analytics_file):
             with open(analytics_file, 'r') as f:
