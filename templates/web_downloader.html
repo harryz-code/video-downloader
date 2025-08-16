@@ -6,6 +6,15 @@
     <title>Free YouTube Video Downloader — Fast, Private, Minimal</title>
     <meta name="description" content="Download YouTube videos quickly with a clean, elegant interface. Mobile-first, privacy-friendly, and completely free.">
     
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX'); // Replace with your actual Measurement ID
+    </script>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -1243,6 +1252,15 @@
                     if (result.success) {
                         this.currentSessionId = result.session_id;
                         this.startProgressPolling(this.currentSessionId);
+                        
+                        // Track download event in Google Analytics
+                        if (typeof gtag !== 'undefined') {
+                            gtag('event', 'download_started', {
+                                'event_category': 'Video',
+                                'event_label': quality,
+                                'value': 1
+                            });
+                        }
                         
                         this.showAlert(`Download started successfully! (${quality})`, 'success');
                         this.updateStatus(`Download started... (${quality})`);
