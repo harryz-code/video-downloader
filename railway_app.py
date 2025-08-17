@@ -565,7 +565,7 @@ def open_folder():
         return jsonify({'success': False, 'error': f'Failed to open folder: {str(e)}'})
 
 if __name__ == '__main__':
-    print("🚀 Starting Web-Based YouTube Downloader with Analytics...")
+    print("🚀 Starting Web-Based YouTube Downloader with Analytics v2.0...")
     
     # Debug: Print all registered routes
     print("📋 Registered routes:")
