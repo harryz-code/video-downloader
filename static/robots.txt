@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /analytics
+
+Sitemap: https://ytdownload.info/static/sitemap.xml

@@ -296,6 +296,16 @@ def health():
     """Health check endpoint for Railway"""
     return jsonify({'status': 'healthy', 'message': 'YouTube Downloader API is running', 'version': '1.1'})
 
+@app.route('/robots.txt')
+def robots_txt():
+    """Robots.txt for SEO"""
+    return send_file('static/robots.txt', mimetype='text/plain')
+
+@app.route('/sitemap.xml')
+def sitemap_xml():
+    """XML sitemap for SEO"""
+    return send_file('static/sitemap.xml', mimetype='application/xml')
+
 @app.route('/analytics')
 def analytics():
     """View basic analytics with password protection"""
